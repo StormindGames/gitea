@@ -75,6 +75,20 @@ export function initGlobalButtonClickOnEnter() {
   });
 }
 
+export function initPopup(target) {
+  const $el = $(target);
+  const attr = $el.attr('data-variation');
+  const attrs = attr ? attr.split(' ') : [];
+  const variations = new Set([...attrs, 'inverted', 'tiny']);
+  $el.attr('data-variation', [...variations].join(' ')).popup();
+}
+
+export function initGlobalPopups() {
+  $('.tooltip').each((_, el) => {
+    initPopup(el);
+  });
+}
+
 export function initGlobalCommon() {
   // Show exact time
   $('.time-since').each(function () {
@@ -121,15 +135,6 @@ export function initGlobalCommon() {
 
   $('.ui.checkbox').checkbox();
 
-  // init popups
-  $('.tooltip').each((_, el) => {
-    const $el = $(el);
-    const attr = $el.attr('data-variation');
-    const attrs = attr ? attr.split(' ') : [];
-    const variations = new Set([...attrs, 'inverted', 'tiny']);
-    $el.attr('data-variation', [...variations].join(' ')).popup();
-  });
-
   $('.top.menu .tooltip').popup({
     onShow() {
       if ($('.top.menu .menu.transition').hasClass('visible')) {
@@ -159,16 +164,12 @@ export function initGlobalCommon() {
     }
   });
 
-  // loading-button this logic used to prevent push one form more than one time
-  $(document).on('click', '.button.loading-button', function (e) {
-    const $btn = $(this);
-
-    if ($btn.hasClass('loading')) {
-      e.preventDefault();
-      return false;
-    }
-
-    $btn.addClass('loading disabled');
+  // prevent multiple form submissions on forms containing .loading-button
+  document.addEventListener('submit', (e) => {
+    const btn = e.target.querySelector('.loading-button');
+    if (!btn) return;
+    if (btn.classList.contains('loading')) return e.preventDefault();
+    btn.classList.add('loading');
   });
 }
 
@@ -192,7 +193,8 @@ export function initGlobalDropzone() {
       thumbnailWidth: 480,
       thumbnailHeight: 480,
       init() {
-        this.on('success', (_file, data) => {
+        this.on('success', (file, data) => {
+          file.uuid = data.uuid;
           const input = $(`<input id="${data.uuid}" name="files" type="hidden">`).val(data.uuid);
           $dropzone.find('.files').append(input);
         });
@@ -383,7 +385,8 @@ export function initGlobalButtons() {
  */
 export function checkAppUrl() {
   const curUrl = window.location.href;
-  if (curUrl.startsWith(appUrl)) {
+  // some users visit "https://domain/gitea" while appUrl is "https://domain/gitea/", there should be no warning
+  if (curUrl.startsWith(appUrl) || `${curUrl}/` === appUrl) {
     return;
   }
   if (document.querySelector('.page-content.install')) {

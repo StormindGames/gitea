@@ -299,6 +299,12 @@ a.commit-statuses-trigger {
   &:extend(.unselectable);
 }
 
+/* try to match button with no icons in height */
+.icon-button {
+  padding-top: 7.42px !important;
+  padding-bottom: 7.42px !important;
+}
+
 .ui.breadcrumb a:hover {
   text-decoration: underline !important;
 }
@@ -1329,7 +1335,7 @@ footer {
 @media @mediaMdAndUp {
   .mobile-only,
   .ui.button.mobile-only {
-    display: none;
+    display: none !important;
   }
 
   // has the same behaviour of sr-only, hiding the content for
@@ -1341,7 +1347,7 @@ footer {
 
 @media @mediaSm {
   .not-mobile {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -2203,6 +2209,10 @@ table th[data-sortt-desc] {
 
     > .dropdown.item {
       position: initial;
+    }
+
+    .menu {
+      flex-direction: row;
     }
   }
 }

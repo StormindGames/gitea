@@ -45,6 +45,7 @@ func Routes() *web.Route {
 	authMethods := []auth.Method{
 		&auth.OAuth2{},
 		&auth.Basic{},
+		&nuget.Auth{},
 		&conan.Auth{},
 	}
 	if setting.Service.EnableReverseProxyAuth {
@@ -257,6 +258,7 @@ func ContainerRoutes() *web.Route {
 
 	r.Get("", container.ReqContainerAccess, container.DetermineSupport)
 	r.Get("/token", container.Authenticate)
+	r.Get("/_catalog", container.ReqContainerAccess, container.GetRepositoryList)
 	r.Group("/{username}", func() {
 		r.Group("/{image}", func() {
 			r.Group("/blobs/uploads", func() {
