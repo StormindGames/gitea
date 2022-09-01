@@ -18,7 +18,7 @@ func getHookTemplates() (hookNames, hookTpls, giteaHookTpls []string) {
 	hookNames = []string{"pre-receive", "update", "post-receive"}
 	hookTpls = []string{
 		// for pre-receive
-		fmt.Sprintf(`#!/bin/bash
+		fmt.Sprintf(`#!/usr/bin/env %s
 
 # This script is a pre-receive hook allowing pushes whose every file:
 # - is smaller than 5 M
@@ -92,7 +92,7 @@ while read oldref newref refname; do
 			log "Folder 'node_modules' not allowed: $filename."
 			exit 1
 		else
-			if [[ "$filename" =~ \.dll$ ]] || [[ "$filename" =~ \.exe$ ]] || [[ "$filename" =~ \.war$ ]] || [[ "$filename" =~ \.ear$ ]] || [[ "$filename" =~ \.jar$ ]]; then
+			if [[ "$filename" =~ \.obj$ ]] || [[ "$filename" =~ \.sln$ ]] || [[ "$filename" =~ \.war$ ]] || [[ "$filename" =~ \.ear$ ]] || [[ "$filename" =~ \.jar$ ]]; then
 				extension="${filename##*.}"
 				log "Files with extension $extension not allowed. Please remove file $filename"
 				exit 1
